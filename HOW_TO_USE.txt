@@ -1,0 +1,9 @@
+OPEN LOCALLY
+1. Open index.html in a browser.
+2. Choose a package.
+3. Choose a date and available time.
+4. Enter customer details.
+5. Click Reserve & Pay 50% Deposit.
+
+PRODUCTION NOTE
+The current page uses browser localStorage, so bookings are not shared between customers. A real business launch should connect the booking form to a server/database and verify WiPay payments server-side.
