@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Erika Mickie — Book an Appointment</title>
+<style>
+:root{--pink:#ff1493;--pink2:#ff63bc;--bg:rgba(7,5,8,.9);--muted:#d8c8d2}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:#fff;font-family:Inter,system-ui,sans-serif;background:#050505 radial-gradient(circle at 50% 20%,#3b102d 0,#120812 35%,#050505 75%) center/cover fixed no-repeat}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.94),rgba(0,0,0,.67),rgba(0,0,0,.88));z-index:-1}
+.wrap{width:min(1060px,94%);margin:auto;padding:30px 0 50px}.brand{text-align:center;margin-bottom:22px}
+.brand h1{margin:0;font-size:clamp(30px,6vw,60px);letter-spacing:-2px;text-shadow:0 0 18px var(--pink)}.brand p{color:var(--muted)}
+.card{width:min(720px,100%);margin:auto;padding:clamp(20px,5vw,38px);border:1px solid rgba(255,20,147,.45);border-radius:26px;background:var(--bg);backdrop-filter:blur(14px);box-shadow:0 0 55px rgba(255,20,147,.18)}
+h2{margin-top:0}.section{margin-top:28px}.packages{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.package{padding:18px;border:1px solid #633d55;border-radius:16px;background:rgba(25,12,23,.9);cursor:pointer;color:#fff;text-align:left}
+.package:hover,.package.selected{border-color:var(--pink);background:rgba(255,20,147,.14);box-shadow:0 0 18px rgba(255,20,147,.14)}
+.package h3{margin:0 0 7px}.package .duration{color:var(--muted);font-size:14px}.package .total{font-size:25px;font-weight:900;margin:12px 0 3px}.package .deposit{color:var(--pink2);font-weight:800}
+label{display:block;font-weight:700;margin:17px 0 7px}input,select,textarea{width:100%;padding:13px 14px;border:1px solid #5d3c50;border-radius:12px;background:rgba(20,10,18,.95);color:white;font-size:16px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(255,20,147,.12)}
+.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:9px}.slot{padding:12px 6px;border:1px solid #613d53;border-radius:11px;background:#190c17;color:white;cursor:pointer}
+.slot:hover,.slot.selected{border-color:var(--pink);background:rgba(255,20,147,.2)}.slot.booked{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+.summary{margin:20px 0;padding:17px;border-radius:14px;background:rgba(255,20,147,.08);border:1px solid rgba(255,20,147,.25)}
+.row{display:flex;justify-content:space-between;gap:15px;margin:8px 0}.muted{color:var(--muted)}.pink{color:var(--pink2)}.price{font-size:23px;font-weight:900}
+.btn{width:100%;border:0;border-radius:13px;padding:15px;margin-top:12px;color:#fff;background:linear-gradient(135deg,#ff1493,#d90072);font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 0 24px rgba(255,20,147,.25)}
+.btn.secondary{background:#291622;box-shadow:none;border:1px solid #5d3c50}.hidden{display:none}.notice{font-size:12px;line-height:1.5;color:#bdaeb8}
+.success{text-align:center;padding:15px 0}.check{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;border:2px solid var(--pink);color:var(--pink2);font-size:36px}
+@media(max-width:650px){.packages{grid-template-columns:1fr}.slots{grid-template-columns:repeat(2,1fr)}body{background-attachment:scroll}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="brand"><h1>Book an Appointment</h1><p>Select a package, choose your date and time, then pay the 50% deposit.</p></header>
+<section class="card">
+<div id="booking">
+<h2>Choose your package</h2>
+<div class="packages" id="packages"></div>
+<div class="section">
+<label for="date">Appointment date</label>
+<input id="date" type="date"><p class="notice" id="capacityNotice">One appointment is available per day.</p>
+<label>Available times</label><div class="slots" id="slots"><span class="muted">Choose a date first.</span></div>
+</div>
+<div class="section"><h2>Customer details</h2>
+<label for="name">Full name</label><input id="name" autocomplete="name" placeholder="Your full name">
+<label for="phone">Phone / WhatsApp</label><input id="phone" autocomplete="tel" placeholder="+1 868 ...">
+<label for="email">Email</label><input id="email" type="email" autocomplete="email" placeholder="you@example.com">
+<label for="notes">Notes (optional)</label><textarea id="notes" placeholder="Anything you'd like us to know?"></textarea>
+</div>
+<div class="summary">
+<div class="row"><span class="muted">Package</span><strong id="sumPackage">—</strong></div>
+<div class="row"><span class="muted">Duration</span><strong id="sumDuration">—</strong></div>
+<div class="row"><span class="muted">Appointment</span><strong id="sumDateTime">—</strong></div>
+<div class="row"><span class="muted">Full price</span><strong id="sumTotal">—</strong></div>
+<div class="row"><span class="muted">50% deposit due now</span><strong class="pink" id="sumDeposit">—</strong></div>
+<div class="row"><span class="muted">Remaining balance</span><strong id="sumBalance">—</strong></div>
+</div>
+<button class="btn" id="depositBtn">Reserve & Pay 50% Deposit</button>
+<p class="notice">Only one appointment can be accepted per day. The deposit is required to reserve the selected appointment. The remaining balance is due separately. Payment verification should be connected server-side before treating an appointment as paid.</p>
+</div>
+<div id="confirmation" class="success hidden">
+<div class="check">✓</div><h2>Appointment Reserved</h2>
+<p class="muted">Your appointment details are ready. Complete the 50% deposit through WiPay.</p>
+<div class="summary">
+<div class="row"><span class="muted">Package</span><strong id="donePackage"></strong></div>
+<div class="row"><span class="muted">Date</span><strong id="doneDate"></strong></div>
+<div class="row"><span class="muted">Time</span><strong id="doneTime"></strong></div>
+<div class="row"><span class="muted">Deposit</span><strong class="pink" id="doneDeposit"></strong></div>
+<div class="row"><span class="muted">Balance due</span><strong id="doneBalance"></strong></div>
+</div>
+<button class="btn" id="wipayBtn">Pay Deposit with WiPay</button><button class="btn secondary" id="backBtn">Change Booking</button>
+</div>
+</section></main>
+<script>
+const WIPAY_URL="https://tt.wipayfinancial.com/to_me/Jamelia";
+const PACKAGES=[{id:"standard",name:"Standard",duration:"30 minutes",price:500},{id:"premium",name:"Premium",duration:"60 minutes",price:750},{id:"vip",name:"VIP",duration:"90 minutes",price:1000}];
+const TIMES=["9:00 AM","10:00 AM","11:00 AM","12:00 PM","1:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM"];
+let selectedPackage=null,selectedTime="";const $=id=>document.getElementById(id);const date=$("date");
+const today=new Date();today.setMinutes(today.getMinutes()-today.getTimezoneOffset());date.min=today.toISOString().slice(0,10);
+function money(n){return new Intl.NumberFormat("en-TT",{style:"currency",currency:"TTD",maximumFractionDigits:0}).format(n)}
+function renderPackages(){$("packages").innerHTML="";PACKAGES.forEach(p=>{const el=document.createElement("button");el.type="button";el.className="package";el.innerHTML=`<h3>${p.name}</h3><div class="duration">${p.duration}</div><div class="total">${money(p.price)}</div><div class="deposit">Deposit: ${money(p.price/2)}</div>`;el.addEventListener("click",()=>{selectedPackage=p;document.querySelectorAll(".package").forEach(x=>x.classList.remove("selected"));el.classList.add("selected");updateSummary()});$("packages").appendChild(el)})}
+function getBookings(){const raw=JSON.parse(localStorage.getItem("appointments")||"{}");return raw&&typeof raw==="object"?raw:{}}
+function renderSlots(){$("slots").innerHTML="";selectedTime="";if(!date.value){$("slots").innerHTML='<span class="muted">Choose a date first.</span>';$("capacityNotice").textContent="One appointment is available per day.";updateSummary();return}const bookings=getBookings();if(bookings[date.value]){$("capacityNotice").textContent="This date is FULL. Please choose another date.";$("slots").innerHTML='<span class="muted">No appointments available on this date.</span>';updateSummary();return}$("capacityNotice").textContent="This date is AVAILABLE — only one appointment can be booked.";TIMES.forEach(t=>{const b=document.createElement("button");b.type="button";b.className="slot";b.textContent=t;b.addEventListener("click",()=>{document.querySelectorAll(".slot").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");selectedTime=t;updateSummary()});$("slots").appendChild(b)});updateSummary()}
+function updateSummary(){$("sumPackage").textContent=selectedPackage?.name||"—";$("sumDuration").textContent=selectedPackage?.duration||"—";$("sumDateTime").textContent=date.value&&selectedTime?`${new Date(date.value+"T12:00:00").toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"})} • ${selectedTime}`:"—";$("sumTotal").textContent=selectedPackage?money(selectedPackage.price):"—";$("sumDeposit").textContent=selectedPackage?money(selectedPackage.price/2):"—";$("sumBalance").textContent=selectedPackage?money(selectedPackage.price/2):"—"}
+date.addEventListener("change",renderSlots);renderPackages();
+$("depositBtn").addEventListener("click",()=>{const name=$("name").value.trim(),phone=$("phone").value.trim(),email=$("email").value.trim();if(!selectedPackage||!date.value||!selectedTime||!name||!phone||!email){alert("Please choose a package, date, time, and complete your name, phone, and email.");return}const booking={package:selectedPackage.name,duration:selectedPackage.duration,total:selectedPackage.price,deposit:selectedPackage.price/2,balance:selectedPackage.price/2,date:date.value,time:selectedTime,name,phone,email,notes:$("notes").value.trim()};localStorage.setItem("pendingAppointment",JSON.stringify(booking));const allBookings=getBookings();allBookings[booking.date]=booking;localStorage.setItem("appointments",JSON.stringify(allBookings));$("donePackage").textContent=booking.package+" • "+booking.duration;$("doneDate").textContent=new Date(booking.date+"T12:00:00").toLocaleDateString(undefined,{month:"long",day:"numeric",year:"numeric"});$("doneTime").textContent=booking.time;$("doneDeposit").textContent=money(booking.deposit);$("doneBalance").textContent=money(booking.balance);$("booking").classList.add("hidden");$("confirmation").classList.remove("hidden");window.open(WIPAY_URL,"_blank","noopener,noreferrer")});
+$("wipayBtn").addEventListener("click",()=>window.open(WIPAY_URL,"_blank","noopener,noreferrer"));$("backBtn").addEventListener("click",()=>{$("confirmation").classList.add("hidden");$("booking").classList.remove("hidden")});
+</script></body></html>
